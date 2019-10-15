@@ -20,24 +20,24 @@ public class Livro {
         this.conexao = conexao;
     }
 
-    public Livro(int idLivro, String titulo, int anoLancamento, int numeroPaginas, String resumo, String pais, String idioma, Connection conexao) {
+    public Livro(int idLivro, String titulo, int anoLancamento, int numeroPaginas, String resumo, String paisOrigem, String idioma, Connection conexao) {
         this.idLivro = idLivro;
         this.titulo = titulo;
         this.anoLancamento = anoLancamento;
         this.numeroPaginas = numeroPaginas;
         this.resumo = resumo;
-        this.pais = pais;
+        this.paisOrigem = paisOrigem;
         this.idioma = idioma;
         this.conexao = conexao;
     }
 
-    public Livro(int idLivro, String titulo, int anoLancamento, int numeroPaginas, String resumo, String pais, String idioma) {
+    public Livro(int idLivro, String titulo, int anoLancamento, int numeroPaginas, String resumo, String paisOrigem, String idioma) {
         this.idLivro = idLivro;
         this.titulo = titulo;
         this.anoLancamento = anoLancamento;
         this.numeroPaginas = numeroPaginas;
         this.resumo = resumo;
-        this.pais = pais;
+        this.paisOrigem = paisOrigem;
         this.idioma = idioma;
     }
     
@@ -46,7 +46,7 @@ public class Livro {
     private int anoLancamento;
     private int numeroPaginas;
     private String resumo;
-    private String pais;
+    private String paisOrigem;
     private String idioma;
     private Connection conexao;
 
@@ -91,11 +91,11 @@ public class Livro {
     }
 
     public String getPais() {
-        return pais;
+        return paisOrigem;
     }
 
-    public void setPais(String pais) {
-        this.pais = pais;
+    public void setPais(String paisOrigem) {
+        this.paisOrigem = paisOrigem;
     }
 
     public String getIdioma() {
@@ -110,6 +110,64 @@ public class Livro {
         String sql = "select * from livro";
         PreparedStatement requisicao = this.conexao.prepareStatement(sql);
         return requisicao.executeQuery();
+        
+    }
+    
+    public boolean incluirLivro() throws SQLException{
+        String sql = "INSERT INTO livro (titulo,anoLancamento,"
+                + "numeroPaginas,"
+                + "resumo,"
+                + "idioma,"
+                + "paisOrigem)"
+                + "VALUES (?,?,?,?,?,?)";
+        
+        PreparedStatement requisicao = this.conexao.prepareStatement(sql);
+        requisicao.setString(1, this.titulo);
+        requisicao.setInt(2, this.anoLancamento);
+        requisicao.setInt(3, this.numeroPaginas);
+        requisicao.setString(4, this.resumo);
+        requisicao.setString(5, this.idioma);
+        requisicao.setString(6, this.paisOrigem);
+    
+        int retorno = requisicao.executeUpdate();
+        requisicao.close();
+        
+        return retorno!=0;
+    }
+    
+    public void atualizaLivro() throws SQLException{
+        String sql = "UPDATE livro set titulo=?,"
+                + "anoLancamento=?,"
+                + "numeroPaginas=?,"
+                + "resumo=?,"
+                + "idioma=?,"
+                + "paisOrigem=?"
+                + "WHERE idLivro = ?";
+        
+        PreparedStatement requisicao = this.conexao.prepareStatement(sql);
+        requisicao.setString(1, this.titulo);
+        requisicao.setInt(2, this.anoLancamento);
+        requisicao.setInt(3, this.numeroPaginas);
+        requisicao.setString(4, this.resumo);
+        requisicao.setString(5, this.idioma);
+        requisicao.setString(6, this.paisOrigem);
+        requisicao.setInt(7, this.idLivro);
+        
+        requisicao.executeUpdate();
+        requisicao.close();
+        
+        
+    }
+    
+    public boolean removerLivro(int id) throws SQLException{
+        String sql = "DELETE FROM livro WHERE idLivro = ?";
+        
+        PreparedStatement requisicao = this.conexao.prepareStatement(sql);
+        requisicao.setInt(1,id);
+        int rowCount = requisicao.executeUpdate();
+        requisicao.close();
+        
+        return rowCount != 0;
         
     }
     
